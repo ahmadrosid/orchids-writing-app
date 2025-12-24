@@ -14,7 +14,9 @@ import {
   Clock,
   Focus,
   Sun,
-  Moon
+  Moon,
+  Copy,
+  Check
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -203,6 +205,17 @@ export default function MinimalistWritingApp() {
     }
   };
 
+  const [copied, setCopied] = useState(false);
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
   const [typewriterMode, setTypewriterMode] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -317,6 +330,17 @@ export default function MinimalistWritingApp() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 font-sans">
+                  <DropdownMenuItem onClick={copyToClipboard} className="text-xs">
+                    {copied ? (
+                      <>
+                        <Check className="mr-2 h-3.5 w-3.5 text-green-500" /> Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="mr-2 h-3.5 w-3.5" /> Copy to Clipboard
+                      </>
+                    )}
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={downloadContent} className="text-xs">
                     <Download className="mr-2 h-3.5 w-3.5" /> Export (.txt)
                   </DropdownMenuItem>
