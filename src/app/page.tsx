@@ -192,7 +192,7 @@ export default function MinimalistWritingApp() {
 
   return (
     <div className={cn(
-      "min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a] selection:bg-black/10 dark:selection:bg-white/10 relative overflow-x-hidden transition-all duration-500",
+      "min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a] text-neutral-800 dark:text-neutral-400 selection:bg-black/10 dark:selection:bg-white/10 relative overflow-x-hidden transition-all duration-500",
       fonts[fontIndex],
       "before:fixed before:inset-0 before:z-[100] before:pointer-events-none before:opacity-[0.03] before:bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"
     )}>
