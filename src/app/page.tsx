@@ -256,7 +256,7 @@ export default function MinimalistWritingApp() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-7 w-7 opacity-30 hover:opacity-100"
+                  className="h-7 w-7 opacity-30 hover:opacity-100 hover:bg-transparent"
                   onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
                   title="Decrease Font Size"
                 >
@@ -266,7 +266,7 @@ export default function MinimalistWritingApp() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-7 w-7 opacity-30 hover:opacity-100"
+                  className="h-7 w-7 opacity-30 hover:opacity-100 hover:bg-transparent"
                   onClick={() => setFontSize(prev => Math.min(72, prev + 2))}
                   title="Increase Font Size"
                 >
