@@ -55,7 +55,7 @@ export default function MinimalistWritingApp() {
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     setSelection({ start: e.target.selectionStart, end: e.target.selectionEnd });
-    handleActivity();
+    handleInteraction('typing');
   };
 
   const handleSelectionChange = () => {
@@ -67,22 +67,46 @@ export default function MinimalistWritingApp() {
     }
   };
 
-  const handleActivity = useCallback(() => {
-    setShowControls(true);
-    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
-    controlsTimeoutRef.current = setTimeout(() => {
-      if (content.length > 0) setShowControls(false);
-    }, 3000);
+  const contentRef = useRef(content);
+  useEffect(() => {
+    contentRef.current = content;
   }, [content]);
 
+  const handleInteraction = useCallback((type: 'mouse' | 'typing') => {
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current);
+    }
+
+    if (type === 'mouse') {
+      setShowControls(true);
+      controlsTimeoutRef.current = setTimeout(() => {
+        if (contentRef.current.length > 0) {
+          setShowControls(false);
+        }
+      }, 3000);
+    } else {
+      setShowControls(false);
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(true);
+      }, 2000);
+    }
+  }, []);
+
   useEffect(() => {
-    window.addEventListener("mousemove", handleActivity);
-    window.addEventListener("keydown", handleActivity);
+    const onMouseMove = () => handleInteraction('mouse');
+    const onKeyDown = () => handleInteraction('typing');
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("keydown", onKeyDown);
+    
     return () => {
-      window.removeEventListener("mousemove", handleActivity);
-      window.removeEventListener("keydown", handleActivity);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("keydown", onKeyDown);
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
     };
-  }, [handleActivity]);
+  }, [handleInteraction]);
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
