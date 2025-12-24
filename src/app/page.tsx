@@ -109,7 +109,7 @@ export default function MinimalistWritingApp() {
             key={pIndex} 
             className={cn(
               "transition-opacity duration-500",
-              isOverlapping ? "opacity-100" : "opacity-15"
+              isOverlapping ? "opacity-75" : "opacity-15"
             )}
           >
             {p}{"\n"}
@@ -133,7 +133,7 @@ export default function MinimalistWritingApp() {
                   key={sIndex}
                   className={cn(
                     "transition-opacity duration-500",
-                    isSentenceOverlapping ? "opacity-100" : "opacity-15"
+                    isSentenceOverlapping ? "opacity-75" : "opacity-15"
                   )}
                 >
                   {s}
