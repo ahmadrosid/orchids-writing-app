@@ -194,8 +194,7 @@ export default function MinimalistWritingApp() {
   return (
     <div className={cn(
       "min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a] text-neutral-800 dark:text-neutral-400 selection:bg-black/10 dark:selection:bg-white/10 relative overflow-x-hidden transition-all duration-500",
-      fonts[fontIndex],
-      "texture-bg"
+      fonts[fontIndex]
     )}>
       {/* Overlay controls */}
       <AnimatePresence>
@@ -408,15 +407,6 @@ export default function MinimalistWritingApp() {
       </AnimatePresence>
 
       <style jsx global>{`
-        .texture-bg::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          z-index: 0;
-          pointer-events: none;
-          opacity: 0.05;
-          background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-        }
         textarea {
           field-sizing: content;
         }
