@@ -198,6 +198,24 @@ export default function MinimalistWritingApp() {
     )}>
       {/* Overlay controls */}
       <AnimatePresence>
+        {!showControls && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed top-6 right-6 z-[120]"
+          >
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 opacity-20 hover:opacity-100"
+              onClick={() => setShowControls(true)}
+              title="Show Controls"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          </motion.div>
+        )}
         {showControls && (
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
@@ -301,6 +319,10 @@ export default function MinimalistWritingApp() {
                       </Button>
                     </div>
                   </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setShowControls(false)} className="text-xs">
+                    <Eye className="mr-2 h-3.5 w-3.5" /> Hide Controls
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={copyToClipboard} className="text-xs">
                     {copied ? (
