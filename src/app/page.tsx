@@ -31,7 +31,7 @@ type FocusMode = "none" | "sentence" | "paragraph";
 
 export default function MinimalistWritingApp() {
   const [content, setContent] = useState("");
-  const [focusMode, setFocusMode] = useState<FocusMode>("none");
+  const [focusMode, setFocusMode] = useState<FocusMode>("sentence");
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [mounted, setMounted] = useState(false);
