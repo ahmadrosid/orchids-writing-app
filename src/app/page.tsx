@@ -102,7 +102,7 @@ export default function MinimalistWritingApp() {
       
       return parts.map((part, i) => {
         if (part.startsWith("**") && part.endsWith("**")) {
-          return <strong key={i} className="font-bold opacity-100">{part}</strong>;
+          return <span key={i} className="opacity-100" style={{ textShadow: "0.5px 0 0 currentColor" }}>{part}</span>;
         }
         if (part.startsWith("*") && part.endsWith("*")) {
           return <em key={i} className="italic opacity-100">{part}</em>;
@@ -111,7 +111,7 @@ export default function MinimalistWritingApp() {
           return <code key={i} className="bg-foreground/10 px-1 rounded font-mono text-[0.9em] opacity-100">{part}</code>;
         }
         if (part.startsWith("#")) {
-          return <span key={i} className="font-bold text-foreground/90 opacity-100">{part}</span>;
+          return <span key={i} className="text-foreground/90 opacity-100" style={{ textShadow: "0.5px 0 0 currentColor" }}>{part}</span>;
         }
         if (part.startsWith("[") && part.includes("](")) {
           return <span key={i} className="text-blue-500/60 underline decoration-blue-500/30 opacity-100">{part}</span>;
@@ -396,7 +396,8 @@ export default function MinimalistWritingApp() {
           {/* Visual Layer for Focus Mode & Markdown */}
           <div 
             className={cn(
-              "absolute inset-0 pointer-events-none whitespace-pre-wrap break-words leading-[1.8] text-foreground transition-all duration-700",
+              "absolute inset-0 pointer-events-none whitespace-pre-wrap break-words leading-[1.8] text-foreground transition-all duration-700 p-0 m-0 border-none",
+              fonts[fontIndex],
               (focusMode !== "none" || isMarkdownEnabled) ? "opacity-100 blur-none" : "opacity-0 blur-sm"
             )}
             style={{ fontSize: `${fontSize}px` }}
@@ -415,7 +416,8 @@ export default function MinimalistWritingApp() {
             onMouseUp={handleSelectionChange}
             className={cn(
               "w-full min-h-[50vh] bg-transparent border-none outline-none resize-none overflow-hidden z-10",
-              "leading-[1.8] caret-foreground/40",
+              "leading-[1.8] caret-foreground/40 p-0 m-0",
+              fonts[fontIndex],
               "placeholder:opacity-20 transition-all duration-700",
               (focusMode !== "none" || isMarkdownEnabled) ? "text-transparent" : "text-foreground opacity-100"
             )}
