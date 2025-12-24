@@ -96,26 +96,66 @@ export default function MinimalistWritingApp() {
     const renderMarkdown = (text: string) => {
       if (!isMarkdownEnabled) return text;
       
-      // Basic Markdown syntax highlighting
-      // Order matters for overlapping patterns
-      const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`|#+\s.*?(?:\n|$)|\[.*?\]\(.*?\))/g);
+      // Comprehensive Markdown regex
+      const patterns = [
+        /(\*\*.*?\*\*)/,       // Bold
+        /(\*.*?\*)/,         // Italic
+        /(`.*?`)/,           // Inline code
+        /(~~.*?~~)/,         // Strikethrough
+        /(^#+\s.*$)/,        // Headings
+        /(\[.*?\]\(.*?\))/,    // Links
+        /(^>\s.*$)/,          // Blockquotes
+        /(^[\s]*[-*+]\s.*$)/,  // Unordered lists
+        /(^[\s]*\d+\.\s.*$)/,  // Ordered lists
+        /(^---$)/,           // Horizontal rule
+      ];
+
+      const combinedRegex = new RegExp(patterns.map(p => p.source).join('|'), 'g');
+      const parts = text.split(combinedRegex);
       
       return parts.map((part, i) => {
+        if (!part) return null;
+
+        // Bold
         if (part.startsWith("**") && part.endsWith("**")) {
-          return <span key={i} className="opacity-100" style={{ textShadow: "0.5px 0 0 currentColor" }}>{part}</span>;
+          return <strong key={i} className="font-bold text-foreground opacity-100" style={{ textShadow: "0.5px 0 0 currentColor" }}>{part}</strong>;
         }
+        // Italic
         if (part.startsWith("*") && part.endsWith("*")) {
           return <em key={i} className="italic opacity-100">{part}</em>;
         }
+        // Strikethrough
+        if (part.startsWith("~~") && part.endsWith("~~")) {
+          return <span key={i} className="line-through opacity-40">{part}</span>;
+        }
+        // Code
         if (part.startsWith("`") && part.endsWith("`")) {
-          return <code key={i} className="bg-foreground/10 px-1 rounded font-mono text-[0.9em] opacity-100">{part}</code>;
+          return <code key={i} className="bg-foreground/10 px-1.5 py-0.5 rounded font-mono text-[0.85em] opacity-100">{part}</code>;
         }
+        // Headings
         if (part.startsWith("#")) {
-          return <span key={i} className="text-foreground/90 opacity-100" style={{ textShadow: "0.5px 0 0 currentColor" }}>{part}</span>;
+          return <span key={i} className="font-bold text-foreground opacity-100 underline decoration-foreground/10 underline-offset-4">{part}</span>;
         }
+        // Blockquotes
+        if (part.startsWith(">")) {
+          return <span key={i} className="italic text-foreground/60 border-l-2 border-foreground/20 pl-2 ml-1">{part}</span>;
+        }
+        // Lists
+        if (part.match(/^[\s]*[-*+]\s/)) {
+          return <span key={i} className="text-foreground/80 opacity-100">{part}</span>;
+        }
+        if (part.match(/^[\s]*\d+\.\s/)) {
+          return <span key={i} className="text-foreground/80 opacity-100">{part}</span>;
+        }
+        // Links
         if (part.startsWith("[") && part.includes("](")) {
           return <span key={i} className="text-blue-500/60 underline decoration-blue-500/30 opacity-100">{part}</span>;
         }
+        // Horizontal rule
+        if (part === "---") {
+          return <span key={i} className="inline-block w-full border-t border-foreground/10 my-4 h-0" />;
+        }
+
         return part;
       });
     };
