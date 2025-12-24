@@ -290,31 +290,31 @@ export default function MinimalistWritingApp() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-44 font-sans">
-                  <div className="flex items-center justify-between px-2 py-2">
-                    <span className="text-[10px] uppercase tracking-widest opacity-50">Font Size</span>
-                    <div className="flex items-center">
+                  <div className="flex items-center justify-between px-2 py-1.5">
+                    <span className="text-[9px] uppercase tracking-widest opacity-50">Size</span>
+                    <div className="flex items-center gap-0.5">
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-6 w-6 opacity-40 hover:opacity-100"
+                        className="h-5 w-5 opacity-40 hover:opacity-100"
                         onClick={(e) => {
                           e.preventDefault();
                           setFontSize(prev => Math.max(12, prev - 2));
                         }}
                       >
-                        <Minus className="h-3 w-3" />
+                        <Minus className="h-2.5 w-2.5" />
                       </Button>
-                      <span className="text-[10px] w-6 text-center opacity-60 tabular-nums">{fontSize}</span>
+                      <span className="text-[9px] w-5 text-center opacity-60 tabular-nums">{fontSize}</span>
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-6 w-6 opacity-40 hover:opacity-100"
+                        className="h-5 w-5 opacity-40 hover:opacity-100"
                         onClick={(e) => {
                           e.preventDefault();
                           setFontSize(prev => Math.min(72, prev + 2));
                         }}
                       >
-                        <Plus className="h-3 w-3" />
+                        <Plus className="h-2.5 w-2.5" />
                       </Button>
                     </div>
                   </div>
