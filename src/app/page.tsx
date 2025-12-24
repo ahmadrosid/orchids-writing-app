@@ -32,7 +32,7 @@ export default function MinimalistWritingApp() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const [cursorPos, setCursorPos] = useState(0);
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -50,13 +50,16 @@ export default function MinimalistWritingApp() {
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
-    setCursorPos(e.target.selectionStart);
+    setSelection({ start: e.target.selectionStart, end: e.target.selectionEnd });
     handleActivity();
   };
 
   const handleSelectionChange = () => {
     if (editorRef.current) {
-      setCursorPos(editorRef.current.selectionStart);
+      setSelection({ 
+        start: editorRef.current.selectionStart, 
+        end: editorRef.current.selectionEnd 
+      });
     }
   };
 
@@ -104,7 +107,7 @@ export default function MinimalistWritingApp() {
       const end = start + p.length;
       currentPos = end + 1; // +1 for the \n
 
-      const isCurrentParagraph = cursorPos >= start && cursorPos <= end;
+      const isOverlapping = selection.start <= end && selection.end >= start;
 
       if (focusMode === "paragraph") {
         return (
@@ -112,7 +115,7 @@ export default function MinimalistWritingApp() {
             key={pIndex} 
             className={cn(
               "transition-opacity duration-500",
-              isCurrentParagraph ? "opacity-100" : "opacity-15"
+              isOverlapping ? "opacity-100" : "opacity-15"
             )}
           >
             {p}{"\n"}
@@ -120,7 +123,7 @@ export default function MinimalistWritingApp() {
         );
       }
 
-      if (focusMode === "sentence" && isCurrentParagraph) {
+      if (focusMode === "sentence" && isOverlapping) {
         // Split paragraph into sentences
         const sentences = p.split(/([.!?]\s+)/);
         let sPos = start;
@@ -130,13 +133,13 @@ export default function MinimalistWritingApp() {
               const sStart = sPos;
               const sEnd = sStart + s.length;
               sPos = sEnd;
-              const isCurrentSentence = cursorPos >= sStart && cursorPos <= sEnd;
+              const isSentenceOverlapping = selection.start <= sEnd && selection.end >= sStart;
               return (
                 <span 
                   key={sIndex}
                   className={cn(
                     "transition-opacity duration-500",
-                    isCurrentSentence ? "opacity-100" : "opacity-15"
+                    isSentenceOverlapping ? "opacity-100" : "opacity-15"
                   )}
                 >
                   {s}
@@ -312,10 +315,10 @@ export default function MinimalistWritingApp() {
             onKeyUp={handleSelectionChange}
             onMouseUp={handleSelectionChange}
             className={cn(
-              "w-full min-h-[50vh] bg-transparent border-none outline-none resize-none overflow-hidden",
-              "text-lg md:text-xl leading-[1.8] text-foreground caret-foreground/40",
+              "w-full min-h-[50vh] bg-transparent border-none outline-none resize-none overflow-hidden z-10",
+              "text-lg md:text-xl leading-[1.8] caret-foreground/40",
               "placeholder:opacity-20 transition-all duration-700",
-              focusMode !== "none" ? "opacity-0" : "opacity-100"
+              focusMode !== "none" ? "text-transparent" : "text-foreground opacity-100"
             )}
             placeholder="Tell your story..."
             autoFocus
