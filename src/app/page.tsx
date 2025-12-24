@@ -42,7 +42,6 @@ export default function MinimalistWritingApp() {
   const { theme, setTheme } = useTheme();
   const [selection, setSelection] = useState({ start: 0, end: 0 });
   const editorRef = useRef<HTMLTextAreaElement>(null);
-  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -59,7 +58,6 @@ export default function MinimalistWritingApp() {
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     setSelection({ start: e.target.selectionStart, end: e.target.selectionEnd });
-    handleInteraction('typing');
   };
 
   const handleSelectionChange = () => {
@@ -75,42 +73,6 @@ export default function MinimalistWritingApp() {
   useEffect(() => {
     contentRef.current = content;
   }, [content]);
-
-  const handleInteraction = useCallback((type: 'mouse' | 'typing') => {
-    if (controlsTimeoutRef.current) {
-      clearTimeout(controlsTimeoutRef.current);
-    }
-
-    if (type === 'mouse') {
-      setShowControls(true);
-      controlsTimeoutRef.current = setTimeout(() => {
-        if (contentRef.current.length > 0) {
-          setShowControls(false);
-        }
-      }, 3000);
-    } else {
-      setShowControls(false);
-      controlsTimeoutRef.current = setTimeout(() => {
-        setShowControls(true);
-      }, 2000);
-    }
-  }, []);
-
-  useEffect(() => {
-    const onMouseMove = () => handleInteraction('mouse');
-    const onKeyDown = () => handleInteraction('typing');
-
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("keydown", onKeyDown);
-    
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("keydown", onKeyDown);
-      if (controlsTimeoutRef.current) {
-        clearTimeout(controlsTimeoutRef.current);
-      }
-    };
-  }, [handleInteraction]);
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -252,28 +214,6 @@ export default function MinimalistWritingApp() {
             </div>
 
             <div className="flex items-center gap-1 pointer-events-auto">
-              <div className="flex items-center mr-2 bg-foreground/5 rounded-full px-1">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-7 w-7 opacity-30 hover:opacity-100 hover:bg-transparent"
-                  onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
-                  title="Decrease Font Size"
-                >
-                  <Minus className="h-3 w-3" />
-                </Button>
-                <span className="text-[10px] opacity-40 w-5 text-center font-sans">{fontSize}</span>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-7 w-7 opacity-30 hover:opacity-100 hover:bg-transparent"
-                  onClick={() => setFontSize(prev => Math.min(72, prev + 2))}
-                  title="Increase Font Size"
-                >
-                  <Plus className="h-3 w-3" />
-                </Button>
-              </div>
-
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -332,6 +272,36 @@ export default function MinimalistWritingApp() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 font-sans">
+                  <DropdownMenuLabel className="text-[10px] uppercase tracking-widest opacity-50 px-2 py-1.5">Text Settings</DropdownMenuLabel>
+                  <div className="flex items-center justify-between px-2 py-1 mb-1">
+                    <span className="text-[10px] uppercase tracking-wider opacity-40">Size</span>
+                    <div className="flex items-center gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 opacity-40 hover:opacity-100 hover:bg-foreground/5"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFontSize(prev => Math.max(12, prev - 2));
+                        }}
+                      >
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      <span className="text-[10px] w-5 text-center opacity-60">{fontSize}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 opacity-40 hover:opacity-100 hover:bg-foreground/5"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFontSize(prev => Math.min(72, prev + 2));
+                        }}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={copyToClipboard} className="text-xs">
                     {copied ? (
                       <>
