@@ -289,15 +289,14 @@ export default function MinimalistWritingApp() {
                     <Settings2 className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 font-sans">
-                  <DropdownMenuLabel className="text-[10px] uppercase tracking-widest opacity-50 px-2 py-1.5">Text Settings</DropdownMenuLabel>
-                  <div className="flex items-center justify-between px-2 py-1 mb-1">
-                    <span className="text-[10px] uppercase tracking-wider opacity-40">Size</span>
-                    <div className="flex items-center gap-1">
+                <DropdownMenuContent align="end" className="w-44 font-sans">
+                  <div className="flex items-center justify-between px-2 py-2">
+                    <span className="text-[10px] uppercase tracking-widest opacity-50">Font Size</span>
+                    <div className="flex items-center">
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-6 w-6 opacity-40 hover:opacity-100 hover:bg-foreground/5"
+                        className="h-6 w-6 opacity-40 hover:opacity-100"
                         onClick={(e) => {
                           e.preventDefault();
                           setFontSize(prev => Math.max(12, prev - 2));
@@ -305,11 +304,11 @@ export default function MinimalistWritingApp() {
                       >
                         <Minus className="h-3 w-3" />
                       </Button>
-                      <span className="text-[10px] w-5 text-center opacity-60">{fontSize}</span>
+                      <span className="text-[10px] w-6 text-center opacity-60 tabular-nums">{fontSize}</span>
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-6 w-6 opacity-40 hover:opacity-100 hover:bg-foreground/5"
+                        className="h-6 w-6 opacity-40 hover:opacity-100"
                         onClick={(e) => {
                           e.preventDefault();
                           setFontSize(prev => Math.min(72, prev + 2));
