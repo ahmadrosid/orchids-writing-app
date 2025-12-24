@@ -216,42 +216,18 @@ export default function MinimalistWritingApp() {
     }
   };
 
-  const [typewriterMode, setTypewriterMode] = useState(false);
+  const fonts = ["font-serif", "font-sans", "font-mono"];
+  const [fontIndex, setFontIndex] = useState(0);
+  const toggleTypography = () => setFontIndex((prev) => (prev + 1) % fonts.length);
+
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (typewriterMode && editorRef.current) {
-      const textarea = editorRef.current;
-      const updateScroll = () => {
-        const { selectionStart } = textarea;
-        const textBefore = textarea.value.substring(0, selectionStart);
-        const linesBefore = textBefore.split('\n').length;
-        const lineHeight = parseInt(getComputedStyle(textarea).lineHeight);
-        const scrollPosition = (linesBefore * lineHeight) - (window.innerHeight / 2) + (lineHeight / 2);
-        
-        window.scrollTo({
-          top: scrollPosition,
-          behavior: 'smooth'
-        });
-      };
-      textarea.addEventListener('input', updateScroll);
-      textarea.addEventListener('click', updateScroll);
-      textarea.addEventListener('keyup', updateScroll);
-      return () => {
-        textarea.removeEventListener('input', updateScroll);
-        textarea.removeEventListener('click', updateScroll);
-        textarea.removeEventListener('keyup', updateScroll);
-      };
-    }
-  }, [typewriterMode]);
-
-  const toggleTypewriter = () => setTypewriterMode(!typewriterMode);
 
   if (!mounted) return null;
 
   return (
     <div className={cn(
-      "min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a] selection:bg-black/10 dark:selection:bg-white/10 font-serif relative overflow-x-hidden",
+      "min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a] selection:bg-black/10 dark:selection:bg-white/10 relative overflow-x-hidden transition-all duration-500",
+      fonts[fontIndex],
       "before:fixed before:inset-0 before:z-[100] before:pointer-events-none before:opacity-[0.03] before:bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"
     )}>
       {/* Overlay controls */}
@@ -275,9 +251,9 @@ export default function MinimalistWritingApp() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className={cn("h-8 w-8 transition-all duration-300", typewriterMode ? "opacity-100 text-blue-500" : "opacity-30 hover:opacity-100")}
-                onClick={toggleTypewriter}
-                title="Typewriter Mode"
+                className="h-8 w-8 opacity-30 hover:opacity-100 transition-all duration-300"
+                onClick={toggleTypography}
+                title="Change Typography"
               >
                 <Type className="h-4 w-4" />
               </Button>
