@@ -18,7 +18,8 @@ import {
   Copy,
   Check,
   Plus,
-  Minus
+  Minus,
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -38,6 +39,7 @@ export default function MinimalistWritingApp() {
   const [focusMode, setFocusMode] = useState<FocusMode>("sentence");
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
+  const [isMarkdownEnabled, setIsMarkdownEnabled] = useState(true);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const [selection, setSelection] = useState({ start: 0, end: 0 });
@@ -91,7 +93,34 @@ export default function MinimalistWritingApp() {
   const readingTime = Math.ceil(wordCount / 200);
 
   const getFocusedContent = () => {
-    if (focusMode === "none") return content;
+    const renderMarkdown = (text: string) => {
+      if (!isMarkdownEnabled) return text;
+      
+      // Basic Markdown syntax highlighting
+      // Order matters for overlapping patterns
+      const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`|#+\s.*?(?:\n|$)|\[.*?\]\(.*?\))/g);
+      
+      return parts.map((part, i) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={i} className="font-bold opacity-100">{part}</strong>;
+        }
+        if (part.startsWith("*") && part.endsWith("*")) {
+          return <em key={i} className="italic opacity-100">{part}</em>;
+        }
+        if (part.startsWith("`") && part.endsWith("`")) {
+          return <code key={i} className="bg-foreground/10 px-1 rounded font-mono text-[0.9em] opacity-100">{part}</code>;
+        }
+        if (part.startsWith("#")) {
+          return <span key={i} className="font-bold text-foreground/90 opacity-100">{part}</span>;
+        }
+        if (part.startsWith("[") && part.includes("](")) {
+          return <span key={i} className="text-blue-500/60 underline decoration-blue-500/30 opacity-100">{part}</span>;
+        }
+        return part;
+      });
+    };
+
+    if (focusMode === "none" && !isMarkdownEnabled) return content;
 
     const paragraphs = content.split("\n");
     let currentPos = 0;
@@ -109,10 +138,10 @@ export default function MinimalistWritingApp() {
             key={pIndex} 
             className={cn(
               "transition-opacity duration-500",
-              isOverlapping ? "opacity-75" : "opacity-15"
+              isOverlapping ? "opacity-90" : "opacity-15"
             )}
           >
-            {p}{"\n"}
+            {renderMarkdown(p)}{"\n"}
           </span>
         );
       }
@@ -133,10 +162,10 @@ export default function MinimalistWritingApp() {
                   key={sIndex}
                   className={cn(
                     "transition-opacity duration-500",
-                    isSentenceOverlapping ? "opacity-75" : "opacity-15"
+                    isSentenceOverlapping ? "opacity-90" : "opacity-15"
                   )}
                 >
-                  {s}
+                  {renderMarkdown(s)}
                 </span>
               );
             })}
@@ -146,8 +175,8 @@ export default function MinimalistWritingApp() {
       }
 
       return (
-        <span key={pIndex} className="opacity-15">
-          {p}{"\n"}
+        <span key={pIndex} className={cn("transition-opacity duration-500", focusMode === "none" ? "opacity-100" : "opacity-15")}>
+          {renderMarkdown(p)}{"\n"}
         </span>
       );
     });
@@ -240,6 +269,19 @@ export default function MinimalistWritingApp() {
                 title="Change Typography"
               >
                 <Type className="h-4 w-4" />
+              </Button>
+
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className={cn(
+                  "h-8 w-8 transition-all duration-300",
+                  isMarkdownEnabled ? "opacity-100 text-blue-500" : "opacity-30"
+                )}
+                onClick={() => setIsMarkdownEnabled(!isMarkdownEnabled)}
+                title="Toggle Markdown Preview"
+              >
+                <FileText className="h-4 w-4" />
               </Button>
 
               <Button 
@@ -351,11 +393,11 @@ export default function MinimalistWritingApp() {
       {/* Editor Container */}
       <main ref={containerRef} className="max-w-2xl mx-auto px-6 py-[30vh] md:py-[40vh] min-h-screen relative">
         <div className="relative w-full">
-          {/* Visual Layer for Focus Mode */}
+          {/* Visual Layer for Focus Mode & Markdown */}
           <div 
             className={cn(
               "absolute inset-0 pointer-events-none whitespace-pre-wrap break-words leading-[1.8] text-foreground transition-all duration-700",
-              focusMode !== "none" ? "opacity-100 blur-none" : "opacity-0 blur-sm"
+              (focusMode !== "none" || isMarkdownEnabled) ? "opacity-100 blur-none" : "opacity-0 blur-sm"
             )}
             style={{ fontSize: `${fontSize}px` }}
             aria-hidden="true"
@@ -375,7 +417,7 @@ export default function MinimalistWritingApp() {
               "w-full min-h-[50vh] bg-transparent border-none outline-none resize-none overflow-hidden z-10",
               "leading-[1.8] caret-foreground/40",
               "placeholder:opacity-20 transition-all duration-700",
-              focusMode !== "none" ? "text-transparent" : "text-foreground opacity-100"
+              (focusMode !== "none" || isMarkdownEnabled) ? "text-transparent" : "text-foreground opacity-100"
             )}
             style={{ fontSize: `${fontSize}px` }}
             placeholder="Tell your story..."
