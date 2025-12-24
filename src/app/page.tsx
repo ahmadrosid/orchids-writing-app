@@ -16,7 +16,9 @@ import {
   Sun,
   Moon,
   Copy,
-  Check
+  Check,
+  Plus,
+  Minus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -220,6 +222,8 @@ export default function MinimalistWritingApp() {
   const [fontIndex, setFontIndex] = useState(0);
   const toggleTypography = () => setFontIndex((prev) => (prev + 1) % fonts.length);
 
+  const [fontSize, setFontSize] = useState(20);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   if (!mounted) return null;
@@ -248,6 +252,28 @@ export default function MinimalistWritingApp() {
             </div>
 
             <div className="flex items-center gap-1 pointer-events-auto">
+              <div className="flex items-center mr-2 bg-foreground/5 rounded-full px-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-7 w-7 opacity-30 hover:opacity-100"
+                  onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
+                  title="Decrease Font Size"
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <span className="text-[10px] opacity-40 w-5 text-center font-sans">{fontSize}</span>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-7 w-7 opacity-30 hover:opacity-100"
+                  onClick={() => setFontSize(prev => Math.min(72, prev + 2))}
+                  title="Increase Font Size"
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -337,9 +363,10 @@ export default function MinimalistWritingApp() {
           {/* Visual Layer for Focus Mode */}
           <div 
             className={cn(
-              "absolute inset-0 pointer-events-none whitespace-pre-wrap break-words text-lg md:text-xl leading-[1.8] text-foreground transition-all duration-700",
+              "absolute inset-0 pointer-events-none whitespace-pre-wrap break-words leading-[1.8] text-foreground transition-all duration-700",
               focusMode !== "none" ? "opacity-100 blur-none" : "opacity-0 blur-sm"
             )}
+            style={{ fontSize: `${fontSize}px` }}
             aria-hidden="true"
           >
             {getFocusedContent()}
@@ -355,10 +382,11 @@ export default function MinimalistWritingApp() {
             onMouseUp={handleSelectionChange}
             className={cn(
               "w-full min-h-[50vh] bg-transparent border-none outline-none resize-none overflow-hidden z-10",
-              "text-lg md:text-xl leading-[1.8] caret-foreground/40",
+              "leading-[1.8] caret-foreground/40",
               "placeholder:opacity-20 transition-all duration-700",
               focusMode !== "none" ? "text-transparent" : "text-foreground opacity-100"
             )}
+            style={{ fontSize: `${fontSize}px` }}
             placeholder="Tell your story..."
             autoFocus
             spellCheck={false}
